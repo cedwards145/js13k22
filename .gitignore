@@ -63,3 +63,9 @@ typings/
 # Built JS files
 dist/*.js
 build/*
+
+# Auto-generated src files
+src/map.json
+
+# Python tools env
+tools/env
