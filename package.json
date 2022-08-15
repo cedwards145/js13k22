@@ -1,0 +1,16 @@
+{
+    "name": "js13k22",
+    "version": "1.0.0",
+    "scripts": {
+        "build": "webpack --mode production",
+        "dev": "webpack --mode development",
+        "package": "bestzip build/js13k.zip dist/*",
+        "deploy": "npm-run-all build package"
+    },
+    "devDependencies": {
+        "bestzip": "^2.2.1",
+        "npm-run-all": "^4.1.5",
+        "webpack": "^5.74.0",
+        "webpack-cli": "^4.10.0"
+    }
+}
