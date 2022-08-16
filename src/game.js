@@ -1,5 +1,7 @@
 import { GameObject } from "./gameobject";
 import mapData from "./map.json";
+import { PlayerBody } from "./playerbody";
+import { PlayerGhost } from "./playerghost";
 
 const TILE_SIZE = 16;
 const TILESET_WIDTH = 16;
@@ -14,19 +16,27 @@ class Game {
         
         this.tileset = tileset;
 
-        this.player = new GameObject(0, 0, 8);
+        this.playerGhost = new PlayerGhost(0, 24);
+        this.playerBody = new PlayerBody(0, 0);
+        this.playerGhost.body = this.playerBody;
+        this.playerBody.ghost = this.playerGhost;
+
+        this.gameObjects = [
+            this.playerBody,
+            this.playerGhost
+        ];
 
         this.collidables = this.generateCollidables();
     }
 
     update() {
-        this.player.update();
+        this.gameObjects.forEach(g => g.update());
 
         this.collidables.forEach(c => {
-            this.player.checkCollision(c);
+            this.gameObjects.forEach(g => g.checkCollision(c));
         });
 
-        this.player.lateUpdate();
+        this.gameObjects.forEach(g => g.lateUpdate());
     }
 
     drawMap() {
@@ -51,7 +61,7 @@ class Game {
 
         this.drawMap();
 
-        this.player.draw(this.context);
+        this.gameObjects.forEach(g => g.draw(this.context));
     }
 
     generateCollidables() {

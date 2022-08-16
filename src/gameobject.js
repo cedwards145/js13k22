@@ -1,4 +1,5 @@
 import { isKeyDown, isKeyPressed } from "./input";
+import { distance } from "./util";
 
 class GameObject {
     constructor(x, y, radius) {
@@ -12,26 +13,25 @@ class GameObject {
         }
 
         this.grounded = false;
+        this.applyPhysics = true;
     }
 
-    update() {
-
-        if (isKeyDown("KeyD")) {
-            this.velocity.x = 3;
-        }
-        else if (isKeyDown("KeyA")) {
-            this.velocity.x = -3;
-        }
-        else {
-            this.velocity.x = 0;
-        }
-
-        if (this.grounded && isKeyPressed("Space")) {
+    jump() {
+        if (this.grounded) {
             this.velocity.y = -5;
             this.grounded = false;
         }
-        
-        this.velocity.y += (9.8 / 60.0);
+    }
+
+    update() {
+        this.velocity.x = 0;
+
+        if (this.applyPhysics) {
+            this.velocity.y += (9.8 / 60.0);
+        }
+        else {
+            this.velocity.y = 0;
+        }
     }
 
     lateUpdate() {
@@ -48,7 +48,7 @@ class GameObject {
         const closestX = Math.min(Math.max(collidable.x, x), collidable.x + collidable.width);
         const closestY = Math.min(Math.max(collidable.y, y), collidable.y + collidable.height);
 
-        return Math.sqrt(Math.pow(closestX - x, 2) + Math.pow(closestY - y, 2)) < this.radius;
+        return distance(closestX, closestY, x, y) < this.radius;
     }
 
     checkCollision(collidable) {
