@@ -1,3 +1,4 @@
+import { Enemy } from "./enemy";
 import { GameObject } from "./gameobject";
 import mapData from "./map.json";
 import { PlayerBody } from "./playerbody";
@@ -23,20 +24,20 @@ class Game {
 
         this.gameObjects = [
             this.playerBody,
-            this.playerGhost
+            this.playerGhost,
+            new Enemy(136, 32, 8)
         ];
 
         this.collidables = this.generateCollidables();
     }
 
     update() {
-        this.gameObjects.forEach(g => g.update());
-
-        this.collidables.forEach(c => {
-            this.gameObjects.forEach(g => g.checkCollision(c));
-        });
-
-        this.gameObjects.forEach(g => g.lateUpdate());
+        this.gameObjects.forEach(g => {
+            g.update();
+            this.collidables.forEach(c => g.checkCollision(c));
+            this.gameObjects.forEach(otherG => g.checkCollision(otherG));
+            g.lateUpdate();
+        })
     }
 
     drawMap() {
@@ -52,7 +53,19 @@ class Game {
                                            x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
             }
-        })            
+        });
+    }
+
+    drawHud() {
+        const spiritGaugeWidth = 200;
+        this.context.fillStyle = "purple";
+        this.context.fillRect(this.width - spiritGaugeWidth - 32,
+                              32,
+                              (this.playerGhost.spirit / this.playerGhost.maxSpirit * spiritGaugeWidth),
+                              32);
+        this.context.fillStyle = "white";
+        this.context.rect(this.width - spiritGaugeWidth - 32, 32, spiritGaugeWidth, 32);
+        this.context.stroke();
     }
     
     draw() {
@@ -61,7 +74,10 @@ class Game {
 
         this.drawMap();
 
+        this.context.fillStyle = "white";
         this.gameObjects.forEach(g => g.draw(this.context));
+
+        this.drawHud();
     }
 
     generateCollidables() {

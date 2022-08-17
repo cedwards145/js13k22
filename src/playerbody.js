@@ -1,3 +1,4 @@
+import { Enemy } from "./enemy";
 import { GameObject } from "./gameobject";
 import { isKeyDown, isKeyPressed } from "./input";
 
@@ -19,7 +20,9 @@ class PlayerBody extends GameObject {
     }
 
     disable() {
-        this.state = DISABLING;
+        if (this.state === ENABLED) {
+            this.state = DISABLING;
+        }
     }
 
     update() {
@@ -48,6 +51,12 @@ class PlayerBody extends GameObject {
             if (this.grounded && isKeyPressed("KeyE")) {
                 this.disable();
             }
+        }
+    }
+
+    handleGameObjectCollision(gameObject) {
+        if (gameObject instanceof Enemy) {
+            this.disable();
         }
     }
 }

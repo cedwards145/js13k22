@@ -14,6 +14,8 @@ class PlayerGhost extends GameObject {
         this.state = DISABLED;
 
         this.body = null;
+        this.maxSpirit = 100;
+        this.spirit = this.maxSpirit;
     }
 
     enable() {
@@ -31,11 +33,20 @@ class PlayerGhost extends GameObject {
             this.state = DISABLED;
             this.body.enable();
         }
+        else if (this.state === DISABLED) {
+            if (this.spirit < this.maxSpirit) {
+                this.spirit++;   
+            }
+        }
         else if (this.state === ENABLING) {
             this.state = ENABLED;
         }
+        else if (this.state === ENABLED) {
+            this.spirit--;
+            if (this.spirit <= 0) {
+                this.disable();
+            }
 
-        if (this.state === ENABLED) {
             if (isKeyDown("KeyD")) {
                 this.velocity.x = 3;
             }

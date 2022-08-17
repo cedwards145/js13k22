@@ -40,7 +40,6 @@ class GameObject {
     }
 
     draw(context) {
-        context.fillStyle = "white";
         context.fillRect(this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
     }
 
@@ -51,7 +50,16 @@ class GameObject {
         return distance(closestX, closestY, x, y) < this.radius;
     }
 
+    handleGameObjectCollision(gameObject) { }
+
     checkCollision(collidable) {
+        if (collidable instanceof GameObject) {
+            if (this !== collidable &&
+                distance(this.x, this.y, collidable.x, collidable.y) < this.radius + collidable.radius) {
+                this.handleGameObjectCollision(collidable);
+            }
+        }
+
         // Horizontal collision
         if (this.checkCollisionWithPosition(collidable, this.x + this.velocity.x, this.y)) {
             // Left collision
